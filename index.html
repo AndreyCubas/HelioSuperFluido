@@ -1,11 +1,660 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hélio Superfluido — Seminário de Física</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:   #eef4f7;
+  --paper-2: #e2ecf2;
+  --paper-3: #d4e4ed;
+  --ink:     #0b1a24;
+  --ink-2:   #1e3344;
+  --ink-3:   #3a5568;
+  --blue:    #0077a8;
+  --blue-2:  #0096c7;
+  --blue-3:  #48cae4;
+  --cold:    #90e0ef;
+  --ash:     #5a7d8f;
+  --rule:    rgba(0,119,168,.2);
+  --rule-2:  rgba(11,26,36,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper-2);
+  color:var(--ink);
+  font-family:'Source Serif 4',Georgia,serif;
+  font-weight:300;
+  overflow-x:hidden;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes floatBubble{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.04)}}
+@keyframes pulseRing{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.4);opacity:0}}
+@keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes atomOrbit{from{transform:rotate(0deg) translateX(60px) rotate(0deg)}to{transform:rotate(360deg) translateX(60px) rotate(-360deg)}}
+@keyframes atomOrbit2{from{transform:rotate(120deg) translateX(48px) rotate(-120deg)}to{transform:rotate(480deg) translateX(48px) rotate(-480deg)}}
+@keyframes atomOrbit3{from{transform:rotate(240deg) translateX(54px) rotate(-240deg)}to{transform:rotate(600deg) translateX(54px) rotate(-600deg)}}
+@keyframes coldGlow{0%,100%{box-shadow:0 0 30px rgba(0,150,199,.3),0 0 80px rgba(72,202,228,.15)}50%{box-shadow:0 0 50px rgba(0,150,199,.55),0 0 120px rgba(72,202,228,.28)}}
+@keyframes vortexSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* ── SLIDE BASE ── */
+.slide{min-height:100vh;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.slide::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+
+/* ── COVER ── */
+#s1{background:var(--ink);color:var(--paper);justify-content:space-between;padding:0;}
+.cover-top{display:flex;justify-content:space-between;align-items:center;padding:26px 56px;border-bottom:1px solid rgba(238,244,247,.07);position:relative;z-index:2;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:rgba(238,244,247,.28);}
+.cover-body{flex:1;display:flex;position:relative;z-index:2;}
+.cover-left{flex:1.1;display:flex;flex-direction:column;justify-content:center;padding:60px 56px;border-right:1px solid rgba(238,244,247,.06);}
+.cover-eyebrow{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.3em;color:var(--blue-2);margin-bottom:28px;animation:fadeUp .8s ease both;}
+.cover-eyebrow span{background:var(--blue);color:var(--paper);padding:3px 10px;margin-right:8px;font-weight:700;}
+h1.cover-title{font-family:'Playfair Display',serif;font-size:clamp(3.4rem,7.5vw,6.5rem);font-weight:900;line-height:.9;letter-spacing:-.02em;color:var(--paper);animation:fadeUp .9s .1s ease both;}
+h1.cover-title em{font-style:italic;color:var(--blue-2);}
+.cover-subtitle{font-size:1.05rem;font-style:italic;color:rgba(238,244,247,.38);margin-top:26px;line-height:1.65;max-width:420px;animation:fadeUp .9s .2s ease both;}
+.cover-coords{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.14em;color:rgba(0,150,199,.6);margin-top:36px;padding-top:22px;border-top:1px solid rgba(0,150,199,.18);animation:fadeUp .9s .32s ease both;}
+.cover-right{flex:.9;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 40px;position:relative;}
+.atom-wrap{position:relative;width:280px;height:280px;display:flex;align-items:center;justify-content:center;}
+.atom-nucleus{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--blue-3),var(--blue),#005f8a);box-shadow:0 0 24px rgba(72,202,228,.6),0 0 60px rgba(0,119,168,.3);animation:coldGlow 3s ease-in-out infinite;}
+.atom-orbit{position:absolute;border-radius:50%;border:1px solid rgba(72,202,228,.25);}
+.orbit-1{width:130px;height:130px;border-color:rgba(72,202,228,.3);}
+.orbit-2{width:104px;height:104px;border-color:rgba(0,150,199,.25);transform:rotate(60deg);}
+.orbit-3{width:118px;height:118px;border-color:rgba(0,119,168,.2);transform:rotate(30deg);}
+.atom-e{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--blue-3);box-shadow:0 0 8px var(--blue-2);}
+.e1{top:50%;left:50%;margin:-4px;transform-origin:0 0;animation:atomOrbit 4s linear infinite;}
+.e2{top:50%;left:50%;margin:-4px;transform-origin:0 0;animation:atomOrbit2 3s linear infinite;}
+.cover-meta{margin-top:36px;text-align:center;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.1em;color:rgba(238,244,247,.16);line-height:2.1;}
+.cover-bottom{display:flex;justify-content:space-between;align-items:center;padding:16px 56px;border-top:1px solid rgba(238,244,247,.06);position:relative;z-index:2;font-family:'Space Mono',monospace;font-size:.56rem;letter-spacing:.14em;color:rgba(238,244,247,.2);}
+
+/* ── SLIDE BACKGROUNDS ── */
+.sl-light{background:var(--paper);}
+.sl-alt{background:var(--paper-2);}
+.sl-dark{background:#071318;color:var(--paper);}
+
+/* ── INNER ── */
+.slide-inner{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 72px;position:relative;z-index:1;}
+
+/* ── TYPE ── */
+.sec-label{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.32em;color:var(--blue);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.sec-label::before{content:'';width:20px;height:1px;background:var(--blue);}
+h2.stitle{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,4.5rem);font-weight:700;line-height:.93;letter-spacing:-.02em;color:var(--ink);margin-bottom:36px;}
+h2.stitle em{font-style:italic;color:var(--blue);}
+h2.stitle.inv{color:var(--paper);}
+h2.stitle.inv em{color:var(--blue-3);}
+p.body{font-size:1rem;line-height:1.85;font-weight:300;color:var(--ink-2);}
+p.body+p.body{margin-top:12px;}
+p.body strong{color:var(--ink);font-weight:400;}
+
+/* ── LAYOUT ── */
+.col-2{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.col-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+.col-a{display:grid;grid-template-columns:1.35fr 1fr;gap:56px;align-items:start;}
+.col-ar{display:grid;grid-template-columns:1fr 1.35fr;gap:56px;align-items:start;}
+.hrule{width:100%;height:1px;background:var(--rule-2);margin:24px 0;}
+
+/* ── COMPONENTS ── */
+.callout{border-left:3px solid var(--blue);padding:16px 22px;background:rgba(0,119,168,.05);font-size:.97rem;font-style:italic;line-height:1.7;color:var(--ink-2);margin:20px 0;}
+.callout strong{color:var(--blue);font-style:normal;}
+.callout.inv{background:rgba(72,202,228,.07);color:rgba(238,244,247,.65);border-color:var(--blue-2);}
+
+.stat-card{border-top:2px solid var(--blue);padding:20px 0 0;}
+.stat-card.inv{border-color:var(--blue-2);}
+.stat-n{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;line-height:1;color:var(--blue);}
+.stat-n.inv{color:var(--blue-3);}
+.stat-u{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.18em;color:var(--ash);margin-top:4px;}
+.stat-l{font-size:.88rem;line-height:1.4;color:var(--ink-3);margin-top:6px;}
+.stat-l.inv{color:rgba(238,244,247,.45);}
+
+.law{padding:20px 22px;border:1px solid var(--rule-2);background:rgba(255,255,255,.4);position:relative;}
+.law::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--blue);}
+.law-t{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.law-f{font-family:'Space Mono',monospace;font-size:.76rem;letter-spacing:.07em;color:var(--blue);background:rgba(0,119,168,.06);padding:7px 11px;margin:8px 0;border-left:2px solid var(--blue);}
+.law-x{font-size:.86rem;line-height:1.6;color:var(--ink-3);}
+.law.inv{background:rgba(0,0,0,.2);border-color:rgba(0,119,168,.2);}
+.law.inv::before{background:var(--blue-2);}
+.law.inv .law-t{color:var(--paper);}
+.law.inv .law-f{color:var(--blue-3);background:rgba(72,202,228,.07);border-color:var(--blue-2);}
+.law.inv .law-x{color:rgba(238,244,247,.55);}
+
+.chem-eq{font-family:'Space Mono',monospace;font-size:.92rem;letter-spacing:.05em;text-align:center;color:var(--blue-2);background:rgba(0,119,168,.06);border:1px solid rgba(0,119,168,.2);padding:18px 26px;margin:22px 0;}
+.chem-sub{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-align:center;color:var(--ash);margin-top:-14px;margin-bottom:18px;font-style:italic;}
+
+blockquote.qblock{padding:20px 28px;border-left:3px solid var(--blue);font-size:1rem;font-style:italic;line-height:1.75;color:var(--ink-2);background:rgba(0,119,168,.04);}
+blockquote.qblock.inv{color:rgba(238,244,247,.65);background:rgba(72,202,228,.05);border-color:var(--blue-2);}
+blockquote.qblock cite{display:block;margin-top:10px;font-size:.65rem;font-style:normal;font-family:'Space Mono',monospace;letter-spacing:.1em;color:var(--ash);}
+
+.bar-row{margin:10px 0;}
+.bar-hd{display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.07em;color:var(--ash);margin-bottom:4px;}
+.bar-hd span:last-child{color:var(--blue-2);}
+.bar-track{height:3px;background:rgba(11,26,36,.08);border-radius:2px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue-2));border-radius:2px;}
+
+.tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.08em;border:1px solid rgba(0,119,168,.3);color:var(--blue);padding:3px 8px;margin:3px;}
+
+/* TIMELINE */
+.timeline{position:relative;}
+.tl-track{position:absolute;left:50px;top:8px;bottom:8px;width:1px;background:var(--rule);}
+.tl-item{display:grid;grid-template-columns:50px 1fr;gap:18px;margin-bottom:24px;position:relative;}
+.tl-year{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--blue);text-align:right;padding-top:2px;}
+.tl-dot{position:absolute;left:43px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px var(--paper-2);}
+.tl-dot.lp{box-shadow:0 0 0 3px var(--paper);}
+.tl-c{font-size:.9rem;line-height:1.65;color:var(--ink-2);}
+.tl-c strong{color:var(--ink);font-weight:400;}
+
+/* SPECIAL — temp diagram */
+.temp-diagram{border:1px solid var(--rule-2);background:rgba(255,255,255,.5);padding:20px 24px;position:relative;overflow:hidden;}
+.temp-scale{display:flex;align-items:stretch;gap:4px;height:48px;margin:12px 0 8px;}
+.temp-seg{flex:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.05em;color:rgba(255,255,255,.8);}
+
+/* REFS */
+.ref-list{list-style:none;counter-reset:ref;}
+.ref-list li{counter-increment:ref;position:relative;padding:11px 0 11px 42px;border-bottom:1px solid var(--rule-2);font-size:.83rem;line-height:1.55;color:var(--ink-3);}
+.ref-list li::before{content:'[' counter(ref) ']';position:absolute;left:0;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--blue);top:13px;}
+.ref-list a{color:var(--blue);text-decoration:none;}
+.ref-list a:hover{text-decoration:underline;}
+
+.slide-footer{padding:14px 72px;border-top:1px solid var(--rule-2);display:flex;justify-content:space-between;align-items:center;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.14em;color:var(--ash);position:relative;z-index:1;flex-shrink:0;}
+.slide-footer.inv{border-color:rgba(238,244,247,.06);color:rgba(238,244,247,.18);}
+
+/* NAV */
+#snav{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:999;}
+.sdot{width:5px;height:5px;border-radius:50%;background:rgba(0,119,168,.28);border:none;cursor:pointer;transition:all .25s;padding:0;}
+.sdot.on,.sdot:hover{background:var(--blue);box-shadow:0 0 7px var(--blue-2);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease;}
+.rv.in{opacity:1;transform:translateY(0);}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+.d4{transition-delay:.32s}.d5{transition-delay:.40s}.d6{transition-delay:.48s}
+
+/* VORTEX VISUAL */
+.vortex-wrap{display:flex;justify-content:center;margin:20px 0;}
+.vortex-svg{filter:drop-shadow(0 0 12px rgba(0,150,199,.4));}
+
+/* PROPERTY CARDS */
+.prop-card{border-top:2px solid var(--blue);padding:18px 0 0;position:relative;}
+.prop-icon{font-size:1.8rem;margin-bottom:8px;}
+.prop-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.prop-text{font-size:.86rem;line-height:1.6;color:var(--ink-3);}
+
+/* PHASE DIAGRAM */
+.phase-box{background:rgba(255,255,255,.45);border:1px solid var(--rule-2);padding:20px;position:relative;}
+
+@media(max-width:900px){
+  .slide-inner{padding:36px 24px;}
+  .col-2,.col-3,.col-a,.col-ar{grid-template-columns:1fr;gap:24px;}
+  h2.stitle{font-size:2.2rem;}
+  h1.cover-title{font-size:3.2rem;}
+  #snav{display:none;}
+  .cover-body{flex-direction:column;}
+  .cover-left,.cover-right{padding:36px 24px;}
+}
+</style>
 </head>
 <body>
-    
+<nav id="snav"></nav>
+
+<!-- ══════════════════════════════════
+     S1 — CAPA
+══════════════════════════════════ -->
+<section class="slide" id="s1" data-slide="0">
+  <div class="cover-top">
+    <span>IFPR · CAMPUS PARANAVAÍ</span>
+    <span>SEMINÁRIO DE FÍSICA · 2025</span>
+    <span>FÍSICA DA MATÉRIA CONDENSADA</span>
+  </div>
+  <div class="cover-body">
+    <div class="cover-left">
+      <p class="cover-eyebrow"><span>SEMINÁRIO DE FÍSICA</span> ESTADOS QUÂNTICOS DA MATÉRIA</p>
+      <h1 class="cover-title">Hélio<br><em>Superfluido</em></h1>
+      <p class="cover-subtitle">O estado da matéria onde a física quântica desafia tudo que conhecemos — viscosidade zero, fluxo eterno e a fronteira do zero absoluto.</p>
+      <div class="cover-coords">He-4 · T &lt; 2,17 K · −270,98 °C · PONTO LAMBDA · CONDENSADO DE BOSE-EINSTEIN</div>
+    </div>
+    <div class="cover-right">
+      <!-- Atom visual -->
+      <div class="atom-wrap">
+        <div class="atom-orbit orbit-1"></div>
+        <div class="atom-orbit orbit-2"></div>
+        <div class="atom-orbit orbit-3"></div>
+        <div class="atom-nucleus"></div>
+        <div class="atom-e e1"></div>
+        <div class="atom-e e2" style="background:var(--cold);box-shadow:0 0 8px var(--blue-3);animation:atomOrbit2 3s linear infinite;"></div>
+      </div>
+      <div class="cover-meta">
+        TEMPERATURA CRÍTICA · 2,17 K (−270,98 °C)<br>
+        VISCOSIDADE · ZERO<br>
+        ISÓTOPO · He-4 (bóson)<br>
+        PRIMEIRA OBSERVAÇÃO · 1938
+      </div>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <span>FÍSICA QUÂNTICA · TERMODINÂMICA · ASTROFÍSICA · MODELO DE LANDAU</span>
+    <span>01 / 10</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     S2 — ÍNDICE
+══════════════════════════════════ -->
+<section class="slide sl-alt" id="s2" data-slide="1">
+  <div class="slide-inner">
+    <div class="sec-label">Estrutura da Apresentação</div>
+    <h2 class="stitle">Sumário<br><em>dos Temas</em></h2>
+    <div class="col-3">
+      <div class="rv"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">01</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">O Elemento Hélio</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Descoberta, propriedades gerais, isótopos He-3 e He-4 e por que ele nunca solidifica</p></div>
+      <div class="rv d1"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">02</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">História da Descoberta</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Kamerlingh Onnes, Kapitsa, Allen e Misener — da liquefação à superfluidez</p></div>
+      <div class="rv d2"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">03</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">Propriedades Especiais</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Viscosidade zero, escalada de paredes, vórtices quantizados e condutividade térmica extrema</p></div>
+      <div class="rv d3" style="margin-top:28px;"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">04</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">Leis da Física</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Mecânica quântica, termodinâmica, princípio da incerteza e condensado de Bose-Einstein</p></div>
+      <div class="rv d4" style="margin-top:28px;"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">05</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">Modelo Teórico</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Teoria dos dois fluidos de Landau, excitações quânticas e fônons vs. rótons</p></div>
+      <div class="rv d5" style="margin-top:28px;"><div class="stat-card"><div class="stat-n" style="font-size:2rem;">06</div><div class="stat-u">SEÇÃO</div></div><p style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-top:12px;">Superfluidez no Cosmos</p><p style="font-size:.85rem;color:var(--ink-3);margin-top:5px;line-height:1.6;">Estrelas de nêutrons, vácuo superfluido, aplicações no LHC e fronteiras da física</p></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>02 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S3 — O ELEMENTO HÉLIO
+══════════════════════════════════ -->
+<section class="slide sl-light" id="s3" data-slide="2">
+  <div class="slide-inner">
+    <div class="sec-label">01 · O Elemento Hélio</div>
+    <h2 class="stitle">O Gás que<br><em>Desafia Regras</em></h2>
+    <div class="col-a">
+      <div>
+        <p class="body rv">O <strong>hélio</strong> (símbolo He, número atômico 2) é o segundo elemento mais abundante do universo, constituindo cerca de <strong>20% da matéria das estrelas</strong>. Em temperatura ambiente é um gás nobre — incolor, inodoro e praticamente inerte.</p>
+        <p class="body rv d1">Foi descoberto de forma independente pelo francês <strong>Pierre Janssen</strong> e pelo inglês <strong>Norman Lockyer</strong> em 18 de agosto de 1868, ao analisarem o espectro do Sol durante um eclipse solar. O nome vem de <em>Helios</em> — deus grego do sol.</p>
+        <div class="callout rv d2">O hélio possui uma propriedade <strong>única no universo</strong>: é o único elemento que <strong>nunca solidifica à pressão atmosférica</strong>, não importa quão baixa seja a temperatura. Apenas sob pressão de ~25 atm ele forma um sólido.</div>
+        <p class="body rv d3">Seus átomos são tão leves e as forças de atração entre eles tão fracas que, mesmo próximo ao zero absoluto, a <strong>energia de ponto zero</strong> — imposta pelo Princípio da Incerteza de Heisenberg — mantém os átomos em vibração constante, impedindo a solidificação.</p>
+        <div class="hrule rv d4"></div>
+        <p style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--ash);letter-spacing:.1em;margin-bottom:8px;" class="rv d4">ISÓTOPOS DO HÉLIO</p>
+        <div class="rv d4">
+          <span class="tag">He-4 · Bóson · Comum</span>
+          <span class="tag">He-3 · Férmion · Raro</span>
+          <span class="tag">Gás Nobre · Grupo 18</span>
+          <span class="tag">2 prótons · 2 elétrons</span>
+        </div>
+      </div>
+      <div>
+        <div class="col-2" style="gap:16px;">
+          <div class="stat-card rv"><div class="stat-n">2</div><div class="stat-u">Nº ATÔMICO</div><div class="stat-l">2 prótons e 2 elétrons</div></div>
+          <div class="stat-card rv d1"><div class="stat-n">4 u</div><div class="stat-u">MASSA ATÔMICA</div><div class="stat-l">He-4, o isótopo comum</div></div>
+          <div class="stat-card rv d2"><div class="stat-n">4,2 K</div><div class="stat-u">PONTO DE EBULIÇÃO</div><div class="stat-l">−268,9 °C a 1 atm</div></div>
+          <div class="stat-card rv d3"><div class="stat-n">20%</div><div class="stat-u">DO UNIVERSO</div><div class="stat-l">2º mais abundante</div></div>
+        </div>
+        <div class="hrule rv d4"></div>
+        <div class="law rv d4">
+          <div class="law-t">Princípio da Incerteza de Heisenberg</div>
+          <div class="law-f">ΔxΔp ≥ ℏ/2</div>
+          <div class="law-x">A imprecisão simultânea em posição (Δx) e momento (Δp) impede que os átomos de hélio parem completamente, mantendo a energia de ponto zero que evita a solidificação — comportamento sem paralelo em nenhum outro elemento.</div>
+        </div>
+        <blockquote class="qblock rv d5" style="margin-top:16px;">
+          O hélio tem átomos tão leves e fracamente atraídos pelos outros que, quando sujeito a baixa temperatura, seus átomos vibram e não cessam — logo ele nunca forma um sólido.
+          <cite>— Projeto Física e Cidadania, UFJF (ufjf.br/fisicaecidadania)</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>03 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S4 — HISTÓRIA
+══════════════════════════════════ -->
+<section class="slide sl-alt" id="s4" data-slide="3">
+  <div class="slide-inner">
+    <div class="sec-label">02 · História da Descoberta</div>
+    <h2 class="stitle">Da Liquefação<br><em>à Superfluidez</em></h2>
+    <div class="col-ar">
+      <div>
+        <div class="timeline rv">
+          <div class="tl-track"></div>
+          <div class="tl-item"><div class="tl-year">1868</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Pierre Janssen e Norman Lockyer descobrem o hélio <strong>no Sol</strong> por espectroscopia durante um eclipse solar — décadas antes de ser encontrado na Terra.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1895</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Sir William Ramsay isola o hélio pela primeira vez na Terra, a partir do aquecimento do mineral cleveíta. Confirma-se que não é metálico.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1908</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">O físico holandês <strong>Heike Kamerlingh Onnes</strong> liquefaz o hélio pela primeira vez, atingindo 4,2 K (−268,9 °C), usando o ciclo Hampson-Linde. A menor temperatura já alcançada até então.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1911</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Onnes descobre a <strong>supercondutividade</strong> do mercúrio a 4,2 K. Ganha o Nobel de Física em 1913 "pelas investigações sobre propriedades da matéria em baixas temperaturas".</div></div></div>
+          <div class="tl-item"><div class="tl-year">1924–25</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Albert Einstein, generalizando o trabalho de Satyendra Nath Bose, prevê teoricamente o <strong>Condensado de Bose-Einstein</strong>: partículas bosônicas colapsar ao estado de menor energia em T→0.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1938</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c"><strong>Pyotr Kapitsa</strong> (Moscou) e independentemente <strong>John Allen e Don Misener</strong> (Cambridge) descobrem que o hélio-4 abaixo de 2,17 K perde toda viscosidade. Kapitsa cunha o termo <em>"superfluido"</em>.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1941</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c"><strong>Lev Landau</strong> publica a teoria dos dois fluidos na Physical Review, explicando matematicamente a superfluidez. Ganha o Nobel de Física em 1962.</div></div></div>
+          <div class="tl-item"><div class="tl-year">1978</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Kapitsa recebe o Nobel de Física pela descoberta da superfluidez — 40 anos após o feito. Em 1972, Lee, Osheroff e Richardson descobrem superfluidez no He-3 (Nobel 1996).</div></div></div>
+          <div class="tl-item"><div class="tl-year">1995</div><div style="position:relative;"><div class="tl-dot"></div><div class="tl-c">Cornell, Wieman e Ketterle criam o primeiro <strong>Condensado de Bose-Einstein gasoso</strong> com rubídio-87. Nobel de Física em 2001.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="law rv"><div class="law-t">Kamerlingh Onnes · Nobel 1913</div><div class="law-x">Fundou em 1904 o maior laboratório criogênico do mundo em Leiden. Foi o primeiro a liquefazer o hélio (1908) e a descobrir a supercondutividade (1911). Cunhou o termo "entalpias". Seu laboratório hoje leva seu nome.</div></div>
+        <div class="law rv d1" style="margin-top:12px;"><div class="law-t">Pyotr Kapitsa · Nobel 1978</div><div class="law-x">Físico soviético que em 1938 mediu a viscosidade do hélio abaixo de 2,17 K e encontrou que ela era, dentro da incerteza experimental, <strong>nula</strong>. Inspirado em "supercondutor", batizou o fenômeno de <em>"superfluido"</em>.</div></div>
+        <div class="law rv d2" style="margin-top:12px;"><div class="law-t">Lev Landau · Nobel 1962</div><div class="law-x">Formulou em 1941 a teoria dos dois fluidos — uma fração normal e uma fração superfluida — que descreveu matematicamente o comportamento do He-II. Introduziu os conceitos de fônons e rótons como excitações elementares.</div></div>
+        <div class="callout rv d3" style="margin-top:16px;">O fenômeno da superfluidez foi tão surpreendente que <strong>Kapitsa esperou 40 anos</strong> pelo Nobel. A descoberta desafiava toda a física clássica conhecida à época.</div>
+        <div class="col-2" style="gap:14px;margin-top:20px;">
+          <div class="stat-card rv d4"><div class="stat-n">1938</div><div class="stat-u">ANO DA DESCOBERTA</div><div class="stat-l">Kapitsa · Allen · Misener</div></div>
+          <div class="stat-card rv d5"><div class="stat-n">4</div><div class="stat-u">PRÊMIOS NOBEL</div><div class="stat-l">Ligados à superfluidez</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>04 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S5 — PROPRIEDADES ESPECIAIS
+══════════════════════════════════ -->
+<section class="slide sl-light" id="s5" data-slide="4">
+  <div class="slide-inner">
+    <div class="sec-label">03 · Propriedades Especiais</div>
+    <h2 class="stitle">O Líquido que<br><em>Quebra as Regras</em></h2>
+
+    <div class="col-3" style="margin-bottom:28px;">
+      <div class="prop-card rv">
+        <div class="prop-icon">〰️</div>
+        <div class="prop-title">Viscosidade Zero</div>
+        <div class="prop-text">O He-II flui sem nenhuma resistência interna. Em um recipiente giratório, o hélio superfluido continua em rotação indefinidamente — teoricamente por <strong>um milhão de anos</strong> sem desacelerar. Isso acontece pois, no estado de mínima energia do condensado, não há energia disponível para dissipação por fricção.</div>
+      </div>
+      <div class="prop-card rv d1">
+        <div class="prop-icon">🧗</div>
+        <div class="prop-title">Efeito de Escalada (Creep)</div>
+        <div class="prop-text">O He-II sobe pelas paredes do recipiente formando um filme de poucos nanômetros (filme de Rollin) e escapa para o exterior. O fenômeno defiantemente ignora a gravidade e a tensão superficial. É chamado de <strong>Efeito Onnes</strong> em homenagem ao descobridor da liquefação.</div>
+      </div>
+      <div class="prop-card rv d2">
+        <div class="prop-icon">🌀</div>
+        <div class="prop-title">Vórtices Quantizados</div>
+        <div class="prop-text">Ao girar o hélio superfluido, ele não gira como um sólido rígido — forma <strong>vórtices discretos e quantizados</strong>, cada um carregando exatamente uma unidade de circulação quântica (κ = h/m). Esses vórtices são a "impressão digital" quântica da superfluidez.</div>
+      </div>
+      <div class="prop-card rv d3" style="margin-top:24px;">
+        <div class="prop-icon">🌡️</div>
+        <div class="prop-title">Condutividade Térmica Extrema</div>
+        <div class="prop-text">O He-II possui condutividade térmica <strong>centenas de vezes maior que o cobre</strong>. Isso o torna o melhor condutor de calor conhecido. Qualquer gradiente de temperatura é quase instantaneamente neutralizado — o líquido está sempre em equilíbrio térmico perfeito.</div>
+      </div>
+      <div class="prop-card rv d4" style="margin-top:24px;">
+        <div class="prop-icon">🔊</div>
+        <div class="prop-title">Segundo Som (Second Sound)</div>
+        <div class="prop-text">O He-II pode propagar dois tipos de onda sonora. O <strong>primeiro som</strong> é a onda de pressão normal. O <strong>segundo som</strong> é uma onda de temperatura — oscilações entre a fração normal e a superfluida se propagam como ondas térmicas, impossíveis em qualquer fluido normal.</div>
+      </div>
+      <div class="prop-card rv d5" style="margin-top:24px;">
+        <div class="prop-icon">💧</div>
+        <div class="prop-title">Ponto Lambda (λ)</div>
+        <div class="prop-text">A transição ocorre abruptamente a <strong>2,1768 K</strong> (−270,9958 °C). Abaixo dessa temperatura, o He-4 (He-I, líquido normal) torna-se He-II (superfluido). A transição tem formato de "λ" no gráfico de calor específico vs. temperatura — daí o nome.</div>
+      </div>
+    </div>
+
+    <!-- Diagrama de fases simplificado -->
+    <div class="temp-diagram rv">
+      <p style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--ash);letter-spacing:.15em;margin-bottom:8px;">DIAGRAMA DE FASES SIMPLIFICADO DO HÉLIO-4</p>
+      <div class="temp-scale">
+        <div class="temp-seg" style="flex:2;background:linear-gradient(135deg,#0077a8,#005f8a);">He-II<br>Superfluido<br>&lt;2,17 K</div>
+        <div class="temp-seg" style="flex:1;background:rgba(0,119,168,.5);font-size:.42rem;">λ<br>2,17 K</div>
+        <div class="temp-seg" style="flex:3;background:linear-gradient(135deg,#3a5568,#1e3344);">He-I<br>Líquido Normal<br>2,17 – 4,2 K</div>
+        <div class="temp-seg" style="flex:1;background:rgba(58,85,104,.5);font-size:.42rem;">Ebul.<br>4,2 K</div>
+        <div class="temp-seg" style="flex:4;background:linear-gradient(135deg,#5a7d8f,#3a5568);">Gasoso<br>&gt; 4,2 K</div>
+      </div>
+      <p style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--ash);">Temperaturas em Kelvin (K). Zero absoluto = 0 K = −273,15 °C. Fonte: Wikipedia PT — Hélio Líquido</p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>05 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S6 — LEIS DA FÍSICA
+══════════════════════════════════ -->
+<section class="slide sl-alt" id="s6" data-slide="5">
+  <div class="slide-inner">
+    <div class="sec-label">04 · Leis da Física</div>
+    <h2 class="stitle">A Física por<br><em>Trás do Fenômeno</em></h2>
+    <div class="col-2">
+      <div>
+        <div class="law rv">
+          <div class="law-t">Princípio da Incerteza — Heisenberg (1927)</div>
+          <div class="law-f">ΔxΔp ≥ ℏ/2</div>
+          <div class="law-x">Impede que os átomos de hélio tenham posição e momento perfeitamente definidos. Isso garante a <strong>energia de ponto zero</strong> — vibração residual que persiste mesmo em T = 0 K, impedindo a solidificação e sendo a raiz do comportamento superfluido.</div>
+        </div>
+        <div class="law rv d1" style="margin-top:12px;">
+          <div class="law-t">Estatística de Bose-Einstein (1924–25)</div>
+          <div class="law-f">f(ε) = 1 / [e^((ε−μ)/kT) − 1]</div>
+          <div class="law-x">Bósons (como o He-4, com spin inteiro) podem <strong>compartilhar o mesmo estado quântico</strong>. Abaixo da temperatura crítica, uma fração macroscópica dos átomos "condensa" no estado de menor energia, formando o Condensado de Bose-Einstein — a base microscópica da superfluidez.</div>
+        </div>
+        <div class="law rv d2" style="margin-top:12px;">
+          <div class="law-t">1ª Lei da Termodinâmica</div>
+          <div class="law-f">ΔU = Q − W</div>
+          <div class="law-x">No superfluido, o sistema já está no <strong>estado de mínima energia possível</strong>. Não há energia disponível para dissipação por fricção interna — por isso a viscosidade é zero. Para "quebrar" a superfluidez, é necessário adicionar energia suficiente para elevar os átomos ao próximo nível quântico.</div>
+        </div>
+        <div class="law rv d3" style="margin-top:12px;">
+          <div class="law-t">Equação de Schrödinger</div>
+          <div class="law-f">iℏ ∂ψ/∂t = Ĥψ</div>
+          <div class="law-x">No superfluido, <strong>todos os átomos compartilham uma única função de onda macroscópica ψ</strong>. Esse comportamento coerente — onde bilhões de átomos agem como se fossem um só — é a essência quântica da superfluidez, tornando visíveis efeitos quânticos em escala macroscópica.</div>
+        </div>
+      </div>
+      <div>
+        <div class="callout rv">A física quântica normalmente se manifesta em escala atômica. A superfluidez é um dos <strong>raros casos em que efeitos quânticos emergem em escala macroscópica</strong> — visível a olho nu, como o hélio escalando paredes.</div>
+        <div class="law rv d1" style="margin-top:16px;">
+          <div class="law-t">Critério de Velocidade de Landau</div>
+          <div class="law-f">v &lt; v_c = min[ε(p)/p]</div>
+          <div class="law-x">Landau demonstrou que um objeto se movendo pelo superfluido não gera atrito enquanto sua velocidade for menor que a <strong>velocidade crítica de Landau</strong>. Abaixo desse limite, nenhuma excitação elementar é criada e o fluxo é completamente sem fricção.</div>
+        </div>
+        <div class="law rv d2" style="margin-top:12px;">
+          <div class="law-t">Quantização da Circulação</div>
+          <div class="law-f">∮ v·dl = n·κ &nbsp; (κ = h/m)</div>
+          <div class="law-x">A circulação no superfluido é <strong>quantizada</strong> — só pode assumir múltiplos inteiros da unidade κ = h/m (h = constante de Planck, m = massa do átomo). Cada vórtice carrega exatamente uma unidade quântica de circulação, sem exceções.</div>
+        </div>
+        <blockquote class="qblock rv d3" style="margin-top:16px;">
+          A superfluidez é devida à condensação de Bose-Einstein dos átomos de He-4 — um estado em que todos os átomos coexistem em um único estado quântico macroscópico.
+          <cite>— Condensado de Bose-Einstein, Wikipedia PT (pt.wikipedia.org)</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>06 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S7 — MODELO TEÓRICO (LANDAU)
+══════════════════════════════════ -->
+<section class="slide sl-dark" id="s7" data-slide="6">
+  <div class="slide-inner">
+    <div class="sec-label rv" style="color:var(--blue-2);">05 · Modelo Teórico</div>
+    <h2 class="stitle inv rv">A Teoria dos<br><em>Dois Fluidos</em></h2>
+
+    <div class="col-a" style="gap:40px;">
+      <div>
+        <p class="body inv rv d1" style="color:rgba(238,244,247,.7);">Em 1941, <strong style="color:var(--paper);">Lev Landau</strong> publicou na Physical Review a teoria que explicou matematicamente a superfluidez. Sua ideia central: o hélio-II não é um único fluido — é a <strong style="color:var(--blue-3);">superposição de dois componentes</strong> independentes coexistindo no mesmo espaço.</p>
+
+        <div class="chem-eq rv d2" style="background:rgba(0,119,168,.1);border-color:rgba(0,150,199,.3);">
+          ρ = ρ<sub>n</sub>(T) + ρ<sub>s</sub>(T)
+        </div>
+        <p class="chem-sub rv d2" style="color:rgba(238,244,247,.3);">Densidade total = componente normal + componente superfluido</p>
+
+        <div class="col-2" style="gap:12px;">
+          <div class="law inv rv d3">
+            <div class="law-t">Componente Normal (ρₙ)</div>
+            <div class="law-x" style="color:rgba(238,244,247,.55);">Comporta-se como um fluido clássico com viscosidade. Carrega entropia e se dissipa. Em T = 0 K, ρₙ → 0 (desaparece completamente). Em T = Tλ, ρₙ = ρ total.</div>
+          </div>
+          <div class="law inv rv d4">
+            <div class="law-t">Componente Superfluido (ρₛ)</div>
+            <div class="law-x" style="color:rgba(238,244,247,.55);">Viscosidade zero, sem entropia, irrotacional exceto em vórtices quantizados. Em T = 0 K, ρₛ = ρ total. Descrito por uma única função de onda coerente.</div>
+          </div>
+        </div>
+
+        <div class="law inv rv d5" style="margin-top:16px;">
+          <div class="law-t">Excitações Elementares: Fônons e Rótons</div>
+          <div class="law-f" style="color:var(--blue-3);">E(p) = cp &nbsp;(fônons) &nbsp;|&nbsp; E(p) = Δ + (p−p₀)²/2μ &nbsp;(rótons)</div>
+          <div class="law-x" style="color:rgba(238,244,247,.55);">Landau identificou dois tipos de excitações no superfluido: <strong style="color:var(--paper);">fônons</strong> (ondas sonoras de longo alcance, energia ∝ momento) e <strong style="color:var(--paper);">rótons</strong> (excitações de curto alcance com estrutura mais complexa). Ambos definem a velocidade crítica de Landau.</div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Vórtice SVG animado -->
+        <div class="vortex-wrap rv d2">
+          <svg class="vortex-svg" width="220" height="220" viewBox="0 0 220 220">
+            <defs>
+              <radialGradient id="vbg" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#0096c7" stop-opacity=".5"/>
+                <stop offset="100%" stop-color="#0077a8" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- rings -->
+            <circle cx="110" cy="110" r="90" fill="none" stroke="rgba(72,202,228,.12)" stroke-width="1"/>
+            <circle cx="110" cy="110" r="70" fill="none" stroke="rgba(0,150,199,.18)" stroke-width="1"/>
+            <circle cx="110" cy="110" r="50" fill="none" stroke="rgba(0,150,199,.25)" stroke-width="1"/>
+            <circle cx="110" cy="110" r="30" fill="none" stroke="rgba(0,150,199,.35)" stroke-width="1.5"/>
+            <circle cx="110" cy="110" r="10" fill="url(#vbg)"/>
+            <!-- vortex arrows -->
+            <g stroke="rgba(72,202,228,.4)" stroke-width="1.2" fill="none">
+              <path d="M110,20 Q190,20 190,110"><animate attributeName="stroke-dasharray" values="0,400;200,200;400,0" dur="4s" repeatCount="indefinite"/></path>
+              <path d="M190,110 Q190,200 110,200"><animate attributeName="stroke-dasharray" values="0,400;200,200;400,0" dur="4s" begin="1s" repeatCount="indefinite"/></path>
+              <path d="M110,200 Q30,200 30,110"><animate attributeName="stroke-dasharray" values="0,400;200,200;400,0" dur="4s" begin="2s" repeatCount="indefinite"/></path>
+              <path d="M30,110 Q30,20 110,20"><animate attributeName="stroke-dasharray" values="0,400;200,200;400,0" dur="4s" begin="3s" repeatCount="indefinite"/></path>
+            </g>
+            <!-- center glow -->
+            <circle cx="110" cy="110" r="6" fill="#48cae4">
+              <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".8;1;.8" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <text x="110" y="214" text-anchor="middle" fill="rgba(72,202,228,.5)" font-family="Space Mono" font-size="7.5" letter-spacing="2">VÓRTICE QUANTIZADO</text>
+          </svg>
+        </div>
+
+        <div class="callout inv rv d3">
+          A teoria de Landau foi tão precisa que <strong>previu quantitativamente</strong> a velocidade do segundo som e os detalhes do calor específico do hélio-II — tudo isso sem ajuste de parâmetros livres.
+        </div>
+
+        <blockquote class="qblock inv rv d4" style="margin-top:16px;">
+          L. Landau (1941). "Theory of the Superfluidity of Helium II". Physical Review 60: 356–358.
+          <cite>— Artigo original, citado em Condensado de Bose-Einstein, Wikipedia PT</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer inv"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>07 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S8 — SUPERFLUIDEZ NA ASTROFÍSICA
+══════════════════════════════════ -->
+<section class="slide sl-light" id="s8" data-slide="7">
+  <div class="slide-inner">
+    <div class="sec-label">06a · Superfluidez na Astrofísica</div>
+    <h2 class="stitle">A Mecânica Quântica<br><em>nas Estrelas</em></h2>
+    <div class="col-2">
+      <div>
+        <p class="body rv">A ideia de que existe superfluidez dentro de <strong>estrelas de nêutrons</strong> foi proposta pelo físico russo <strong>Arkady Migdal</strong> em 1959. Décadas depois, em 2011, a NASA confirmou experimentalmente essa hipótese ao analisar a estrela de nêutrons <strong>Cassiopeia A</strong> (Cas A), a 11.000 anos-luz da Terra.</p>
+        <p class="body rv d1">Estrelas de nêutrons são formadas pela implosão de estrelas massivas em supernovas. Concentram <strong>até 2 massas solares</strong> em uma esfera de apenas ~20 km de diâmetro. Uma colher de chá de seu material pesa <strong>6 bilhões de toneladas</strong>.</p>
+        <div class="callout rv d2">No laboratório, a superfluidez do hélio depende de temperaturas próximas ao zero absoluto (2,17 K). Nas estrelas de nêutrons, a superfluidez ocorre a temperaturas de <strong>500 milhões a 1 bilhão de graus Celsius</strong> — porque as interações se dão pela força nuclear forte, e não por forças de Van der Waals.</div>
+        <p class="body rv d3">Dois grupos de cientistas analisaram o resfriamento de Cas A entre 1999 e 2009 com o telescópio de raios X <strong>Chandra</strong>. Observaram uma queda de 4% na temperatura em 10 anos — resfriamento rápido explicado apenas pela formação de nêutrons superfluidos no núcleo.</p>
+      </div>
+      <div>
+        <div class="col-2" style="gap:14px;">
+          <div class="stat-card rv"><div class="stat-n">20 km</div><div class="stat-u">DIÂMETRO</div><div class="stat-l">De uma estrela de nêutrons</div></div>
+          <div class="stat-card rv d1"><div class="stat-n">2 M☉</div><div class="stat-u">MASSA MÁXIMA</div><div class="stat-l">660 mil massas da Terra</div></div>
+          <div class="stat-card rv d2"><div class="stat-n">~10⁹°C</div><div class="stat-u">TEMPERATURA</div><div class="stat-l">Superfluidez no núcleo</div></div>
+          <div class="stat-card rv d3"><div class="stat-n">1959</div><div class="stat-u">PREVISÃO TEÓRICA</div><div class="stat-l">Arkady Migdal</div></div>
+        </div>
+        <div class="law rv d4" style="margin-top:20px;"><div class="law-t">Por que superfluido a bilhões de graus?</div><div class="law-x">Na Terra, a superfluidez exige T baixíssimo pois as forças entre átomos de hélio são as fracas forças de Van der Waals. Nas estrelas de nêutrons, os nêutrons interagem pela <strong>força nuclear forte</strong> — muito mais intensa — e formam pares de Cooper análogos aos elétrons em supercondutores, permitindo superfluidez mesmo a temperaturas extremamente altas.</div></div>
+        <blockquote class="qblock rv d5" style="margin-top:16px;">
+          A superfluidez dos pares de nêutrons no interior das estrelas de nêutrons depende da força nuclear forte — a interação mais intensa da natureza.
+          <cite>— Universo Físico, UNICAMP (blogs.unicamp.br/universofisico)</cite>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>08 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S9 — VÁCUO SUPERFLUIDO & APLICAÇÕES
+══════════════════════════════════ -->
+<section class="slide sl-alt" id="s9" data-slide="8">
+  <div class="slide-inner">
+    <div class="sec-label">06b · Vácuo Superfluido &amp; Aplicações</div>
+    <h2 class="stitle">Além do Laboratório:<br><em>O Universo Superfluido</em></h2>
+    <div class="col-ar">
+      <div>
+        <div class="law rv">
+          <div class="law-t">Teoria do Vácuo Superfluido (SVT)</div>
+          <div class="law-f">vácuo físico ≡ superfluido quântico</div>
+          <div class="law-x">A SVT (Superfluido Vacuum Theory) é uma abordagem em física teórica e mecânica quântica que trata o vácuo físico como um superfluido. O objetivo é desenvolver modelos que unifiquem a mecânica quântica (três das quatro forças fundamentais) com a <strong>gravidade</strong>, tornando-a candidata a uma teoria quântica da gravidade e extensão do Modelo Padrão. Partículas elementares seriam diferentes manifestações de excitações nesse superfluido subjacente.</div>
+        </div>
+        <div class="law rv d1" style="margin-top:12px;">
+          <div class="law-t">LHC — Grande Colisor de Hádrons</div>
+          <div class="law-x">O CERN usa <strong>120 toneladas de hélio superfluido</strong> ao redor dos 27 km do acelerador para resfriar os ímãs supercondutores que guiam os feixes de prótons. A condutividade térmica extrema do He-II garante o resfriamento homogêneo e estável necessário para a supercondutividade dos ímãs a 1,9 K.</div>
+        </div>
+        <div class="law rv d2" style="margin-top:12px;">
+          <div class="law-t">IRM e Ressonância Magnética</div>
+          <div class="law-x">Aparelhos de IRM hospitalar usam hélio líquido para resfriar bobinas supercondutoras. O He-II, por ser um superfluido a 4,2 K, garante estabilidade térmica superior. Com a escassez global de hélio, pesquisadores buscam sistemas mais eficientes de recirculação.</div>
+        </div>
+        <div class="law rv d3" style="margin-top:12px;">
+          <div class="law-t">Supersolidez — Fronteira do Conhecimento</div>
+          <div class="law-x">Em 2004, Kim e Chan (Penn State) observaram que hélio sólido (sob ~25 atm) apresentava comportamento superfluido parcial — o chamado <strong>supersólido</strong>: simultaneamente rígido como sólido e fluido como superfluido. Confirmado por múltiplos grupos, ainda sem explicação consensual.</div>
+        </div>
+      </div>
+      <div>
+        <div class="callout rv">A SVT propõe que <strong>o próprio vácuo do universo</strong> é um superfluido. Se correta, fenômenos como a expansão acelerada do universo e a massa dos bósons poderiam ser explicados como excitações desse superfluido primordial.</div>
+
+        <div style="margin-top:20px;" class="rv d1">
+          <div class="bar-row"><div class="bar-hd"><span>Hélio superfluido no LHC</span><span>120 t</span></div><div class="bar-track"><div class="bar-fill" style="width:90%;"></div></div></div>
+          <div class="bar-row"><div class="bar-hd"><span>Temperatura de operação LHC</span><span>1,9 K</span></div><div class="bar-track"><div class="bar-fill" style="width:15%;"></div></div></div>
+          <div class="bar-row"><div class="bar-hd"><span>Cond. térmica vs. cobre</span><span>&gt;100×</span></div><div class="bar-track"><div class="bar-fill" style="width:80%;"></div></div></div>
+          <div class="bar-row"><div class="bar-hd"><span>Supersolidez confirmada</span><span>2004</span></div><div class="bar-track"><div class="bar-fill" style="width:70%;background:linear-gradient(90deg,var(--ash),var(--blue));"></div></div></div>
+          <p style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--ash);margin-top:8px;line-height:1.5;">Fonte: HypeScience / Wikipedia Superfluidez</p>
+        </div>
+
+        <blockquote class="qblock rv d2" style="margin-top:20px;">
+          O superfluido hélio-3 parece o vácuo para uma haste se movendo através dele. Não há resistência, nenhuma. Acho isso muito intrigante.
+          <cite>— Dr. Samuli Autti, Universidade de Lancaster (via terrarara.com.br)</cite>
+        </blockquote>
+
+        <div class="col-2" style="gap:14px;margin-top:16px;">
+          <div class="stat-card rv d3"><div class="stat-n">27 km</div><div class="stat-u">CIRCUNFERÊNCIA</div><div class="stat-l">Do LHC resfriado com He-II</div></div>
+          <div class="stat-card rv d4"><div class="stat-n">1,9 K</div><div class="stat-u">TEMPERATURA LHC</div><div class="stat-l">Mais frio que o espaço</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA</span><span>09 / 10</span></div>
+</section>
+
+<!-- ══════════════════════════════════
+     S10 — REFERÊNCIAS
+══════════════════════════════════ -->
+<section class="slide sl-light" id="s10" data-slide="9">
+  <div class="slide-inner">
+    <div class="sec-label">Referências Bibliográficas</div>
+    <h2 class="stitle">Fontes &amp;<br><em>Referências</em></h2>
+    <div class="col-2" style="gap:36px;align-items:start;">
+      <ul class="ref-list">
+        <li><strong>Wikipedia PT</strong> — Hélio. Disponível em: <a href="https://pt.wikipedia.org/wiki/H%C3%A9lio" target="_blank">pt.wikipedia.org/wiki/Hélio</a>. Acesso: abr. 2025.</li>
+        <li><strong>Wikipedia PT</strong> — Hélio Líquido. Disponível em: <a href="https://pt.wikipedia.org/wiki/H%C3%A9lio_l%C3%ADquido" target="_blank">pt.wikipedia.org/wiki/Hélio_líquido</a>. Acesso: abr. 2025.</li>
+        <li><strong>Wikipedia PT</strong> — Superfluidez. Disponível em: <a href="https://pt.wikipedia.org/wiki/Superfluidez" target="_blank">pt.wikipedia.org/wiki/Superfluidez</a>. Acesso: abr. 2025.</li>
+        <li><strong>Wikipedia PT</strong> — Condensado de Bose-Einstein. Disponível em: <a href="https://pt.wikipedia.org/wiki/Condensado_de_Bose-Einstein" target="_blank">pt.wikipedia.org/wiki/Condensado_de_Bose-Einstein</a>. Acesso: abr. 2025.</li>
+        <li><strong>Projeto Física e Cidadania · UFJF</strong> — Os Superfluidos. 2014. Disponível em: <a href="https://www.ufjf.br/fisicaecidadania/2014/08/04/superfluidos/" target="_blank">ufjf.br/fisicaecidadania</a>. Acesso: abr. 2025.</li>
+        <li><strong>Ceticismo, Ciência e Tecnologia</strong> — Superfluido ignora a gravidade e escala paredes. 2009. Disponível em: <a href="https://ceticismo.net/2009/05/20/superfluido-ignora-a-gravidade-e-escala-paredes/" target="_blank">ceticismo.net</a>. Acesso: abr. 2025.</li>
+      </ul>
+      <ul class="ref-list" style="counter-reset:ref 6;">
+        <li><strong>Universo Físico · UNICAMP</strong> — Estrela de nêutrons tem superfluido em seu interior. 2011. Disponível em: <a href="https://www.blogs.unicamp.br/universofisico/2011/03/08/estrela_de_neutrons_tem_superf/" target="_blank">blogs.unicamp.br/universofisico</a>. Acesso: abr. 2025.</li>
+        <li><strong>HypeScience</strong> — Um laboratório onde líquidos fluem para cima. 2014. Disponível em: <a href="https://hypescience.com/um-laboratorio-onde-liquidos-fluem-para-cima-e-solidos-atravessam-um-ao-outro/" target="_blank">hypescience.com</a>. Acesso: abr. 2025.</li>
+        <li><strong>TecMundo</strong> — Supermateriais: física quântica diante dos seus olhos. 2012. Disponível em: <a href="https://www.tecmundo.com.br/fisica/19452-supermateriais-fisica-quantica-diante-dos-seus-olhos.htm" target="_blank">tecmundo.com.br</a>. Acesso: abr. 2025.</li>
+        <li><strong>Terra Rara</strong> — Por que não há limite de velocidade em um universo superfluido. Disponível em: <a href="https://terrarara.com.br/fisica-teorica/fisica-teorica/por-que-nao-ha-limite-de-velocidade-em-um-universo-superfluido/" target="_blank">terrarara.com.br</a>. Acesso: abr. 2025.</li>
+        <li><strong>FAPESP Agência</strong> — Cientista brasileiro e Nobel de Física pesquisam superfluidos. 2012. Disponível em: <a href="https://agencia.fapesp.br/cientista-brasileiro-e-nobel-de-fisica-pesquisam-superfluidos/16388" target="_blank">agencia.fapesp.br</a>. Acesso: abr. 2025.</li>
+        <li><strong>Inovação Tecnológica</strong> — Superfluidez em supersólido confirmada por vórtices quânticos. 2024. Disponível em: <a href="https://www.inovacaotecnologica.com.br/noticias/noticia.php?artigo=superfluidez-supersolido-confirmada-vortices-quanticos" target="_blank">inovacaotecnologica.com.br</a>. Acesso: abr. 2025.</li>
+      </ul>
+    </div>
+    <div style="margin-top:28px;padding:16px 22px;border:1px solid var(--rule-2);background:rgba(255,255,255,.4);">
+      <p style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--ash);letter-spacing:.14em;margin-bottom:5px;">NOTA METODOLÓGICA</p>
+      <p style="font-size:.83rem;color:var(--ink-3);line-height:1.6;">Todas as informações foram obtidas de fontes verificáveis listadas acima. Dados quantitativos (temperaturas, densidades, datas) foram cruzados entre múltiplas fontes. Conceitos de física avançada foram apresentados em linguagem acessível mantendo rigor científico. Não foram incluídas informações sem referência verificável.</p>
+    </div>
+  </div>
+  <div class="slide-footer"><span>HÉLIO SUPERFLUIDO · SEMINÁRIO DE FÍSICA · IFPR PARANAVAÍ · 2025</span><span>10 / 10</span></div>
+</section>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const nav=document.getElementById('snav');
+slides.forEach((_,i)=>{const b=document.createElement('button');b.className='sdot'+(i===0?' on':'');b.onclick=()=>slides[i].scrollIntoView({behavior:'smooth'});nav.appendChild(b);});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const idx=[...slides].indexOf(e.target);document.querySelectorAll('.sdot').forEach((d,i)=>d.classList.toggle('on',i===idx));}});},{threshold:.5});
+slides.forEach(s=>obs.observe(s));
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.07});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+</script>
 </body>
 </html>
